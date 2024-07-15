@@ -1,6 +1,6 @@
-## React + TypeScript + Vite (Hỏi Dân IT)
+## React + TypeScript + Vite
 
-Template này được sử dụng cho series React/Next.JS của tác giả Hỏi Dân IT (Eric)
+Web app này sử dụng React/Next.JS
 
 Các bước cần làm:
 1. Clone dự án
