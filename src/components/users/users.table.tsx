@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table, Button } from 'antd';
+import { Table, Button, notification } from 'antd';
 import type { TableProps } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import CreateUserModel from "./create.user.model";
@@ -36,6 +36,11 @@ const UserTable = () => {
             }
         })
         const d = await res.json();
+        if (!d.data) {
+            notification.error({
+                message: JSON.stringify(d.message),
+            })
+        }
         setListUsers(d.data.result);
 
     }

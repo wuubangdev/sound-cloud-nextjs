@@ -45,7 +45,6 @@ const CreateUserModel = (props: IProps) => {
                 description: JSON.stringify(d.message)
             })
         }
-        console.log(">>>check d: ", d)
     };
 
 

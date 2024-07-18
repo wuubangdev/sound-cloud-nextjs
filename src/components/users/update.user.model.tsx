@@ -24,7 +24,7 @@ const UpdateUserModel = (props: IProps) => {
     const [address, setAddress] = useState("");
     const [role, setRole] = useState("");
 
-    console.log(dataUpdate);
+    // console.log(dataUpdate);
     useEffect(() => {
         if (dataUpdate) {
             setName(dataUpdate.name);
@@ -39,10 +39,10 @@ const UpdateUserModel = (props: IProps) => {
 
     const handleOk = async () => {
         const data = {
-            name, email, password, age, gender, address, role
+            _id: dataUpdate?._id, name, email, age, gender, address, role
         }
         const res = await fetch("http://localhost:8000/api/v1/users", {
-            method: "POST",
+            method: "PATCH",
             headers: {
                 'Authorization': `Bearer ${access_token}`,
                 "Content-Type": "application/json",
@@ -53,7 +53,7 @@ const UpdateUserModel = (props: IProps) => {
         if (d.data) {
             await getData();
             notification.success({
-                message: "Tao moi user thanh cong",
+                message: "Cap nhat user thanh cong",
             })
             handleCloseCreateModal();
         } else {
@@ -62,7 +62,6 @@ const UpdateUserModel = (props: IProps) => {
                 description: JSON.stringify(d.message)
             })
         }
-        console.log(">>>check d: ", d)
     };
 
 
@@ -105,6 +104,7 @@ const UpdateUserModel = (props: IProps) => {
                 <div>
                     <label>Password</label>
                     <Input
+                        disabled
                         value={password}
                         onChange={(e) => { setPassword(e.target.value) }}
                         placeholder="Basic usage"
