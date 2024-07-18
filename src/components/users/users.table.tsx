@@ -4,10 +4,14 @@ import type { TableProps } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import CreateUserModel from "./create.user.model";
 import UpdateUserModel from "./update.user.model";
-interface IUsers {
+export interface IUsers {
     _id: string;
     email: string;
     name: string;
+    password: string;
+    age: string;
+    gender: string;
+    address: string;
     role: string
 }
 
@@ -15,11 +19,11 @@ const UserTable = () => {
     const [listUsers, setListUsers] = useState([]);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [dataUpdate, setDataUpdate] = useState<null | IUsers>(null);
 
     const access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiX2lkIjoiNjY5NjU3ZWUyNmI5YzVhZjk2NWIyNmIzIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJhZGRyZXNzIjoiVmlldE5hbSIsImlzVmVyaWZ5Ijp0cnVlLCJuYW1lIjoiSSdtIGFkbWluIiwidHlwZSI6IlNZU1RFTSIsInJvbGUiOiJBRE1JTiIsImdlbmRlciI6Ik1BTEUiLCJhZ2UiOjY5LCJpYXQiOjE3MjEyNjY2NzUsImV4cCI6MTgwNzY2NjY3NX0.XLFr2meUIgTOLvHgX3Vn8U4WY3BPpianqqmxghavLHk"
 
     useEffect(() => {
-        console.log("check user effect");
         getData();
     }, [])
 
@@ -66,6 +70,7 @@ const UserTable = () => {
                         <Button
                             type="primary"
                             onClick={() => {
+                                setDataUpdate(record);
                                 setIsUpdateModalOpen(true);
                             }}
                         >
@@ -108,6 +113,8 @@ const UserTable = () => {
                 getData={getData}
                 isUpdateModalOpen={isUpdateModalOpen}
                 setIsUpdateModalOpen={setIsUpdateModalOpen}
+                dataUpdate={dataUpdate}
+                setDataUpdate={setDataUpdate}
             />
         </>
     )
