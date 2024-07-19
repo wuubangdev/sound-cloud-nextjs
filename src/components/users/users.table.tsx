@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Table, Button, notification } from 'antd';
-import type { TableProps } from 'antd';
+import { Table, Button, notification, Popconfirm, message } from 'antd';
+import type { TableProps, PopconfirmProps } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import CreateUserModel from "./create.user.model";
 import UpdateUserModel from "./update.user.model";
@@ -21,7 +21,7 @@ const UserTable = () => {
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [dataUpdate, setDataUpdate] = useState<null | IUsers>(null);
 
-    const access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiX2lkIjoiNjY5NjU3ZWUyNmI5YzVhZjk2NWIyNmIzIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJhZGRyZXNzIjoiVmlldE5hbSIsImlzVmVyaWZ5Ijp0cnVlLCJuYW1lIjoiSSdtIGFkbWluIiwidHlwZSI6IlNZU1RFTSIsInJvbGUiOiJBRE1JTiIsImdlbmRlciI6Ik1BTEUiLCJhZ2UiOjY5LCJpYXQiOjE3MjEyNjY2NzUsImV4cCI6MTgwNzY2NjY3NX0.XLFr2meUIgTOLvHgX3Vn8U4WY3BPpianqqmxghavLHk"
+    const access_token = localStorage.getItem("access_token") as string;
 
     useEffect(() => {
         getData();
@@ -81,16 +81,46 @@ const UserTable = () => {
                         >
                             Update
                         </Button>
-                        <Button
-                            type="primary"
+                        <Popconfirm
+                            title={`Delete the user`}
+                            description={`Are you sure to delete: ${record.name} ?`}
+                            onConfirm={() => confirm(record)}
+                            okText="Yes"
+                            cancelText="No"
                         >
-                            Delete
-                        </Button>
+                            <Button
+                                danger
+                            >
+                                Delete
+                            </Button>
+                        </Popconfirm>
+
                     </div>
                 )
             },
         },
     ]
+
+    const confirm = async (user: IUsers) => {
+        const res = await fetch(`http://localhost:8000/api/v1/users/${user._id}`, {
+            method: "DELETE",
+            headers: {
+                'Authorization': `Bearer ${access_token}`,
+                "Content-Type": "application/json",
+            }
+        })
+        const d = await res.json();
+        if (d.data) {
+            notification.success({
+                message: "Xoa user thanh cong",
+            })
+            await getData();
+        } else {
+            notification.error({
+                message: JSON.stringify(d.message),
+            })
+        }
+    };
     return (
         <>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

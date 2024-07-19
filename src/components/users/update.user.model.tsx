@@ -38,32 +38,34 @@ const UpdateUserModel = (props: IProps) => {
     }, [dataUpdate])
 
     const handleOk = async () => {
-        const data = {
-            _id: dataUpdate?._id, name, email, age, gender, address, role
-        }
-        const res = await fetch("http://localhost:8000/api/v1/users", {
-            method: "PATCH",
-            headers: {
-                'Authorization': `Bearer ${access_token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ...data })
-        })
-        const d = await res.json();
-        if (d.data) {
-            await getData();
-            notification.success({
-                message: "Cap nhat user thanh cong",
+        if (dataUpdate) {
+            const data = {
+                _id: dataUpdate._id, name, email, age, gender, address, role
+            }
+            const res = await fetch("http://localhost:8000/api/v1/users", {
+                method: "PATCH",
+                headers: {
+                    'Authorization': `Bearer ${access_token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ ...data })
             })
-            handleCloseCreateModal();
-        } else {
-            notification.error({
-                message: "Co loi xay ra",
-                description: JSON.stringify(d.message)
-            })
+            const d = await res.json();
+            if (d.data) {
+                await getData();
+                notification.success({
+                    message: "Cap nhat user thanh cong",
+                })
+                handleCloseCreateModal();
+            } else {
+                notification.error({
+                    message: "Co loi xay ra",
+                    description: JSON.stringify(d.message)
+                })
+            }
         }
-    };
 
+    };
 
     const handleCloseCreateModal = () => {
         setIsUpdateModalOpen(false);
