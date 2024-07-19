@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Table, Button, notification, Popconfirm, message } from 'antd';
-import type { TableProps, PopconfirmProps } from 'antd';
+import { Table, Button, notification, Popconfirm } from 'antd';
+import type { TableProps } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import CreateUserModel from "./create.user.model";
 import UpdateUserModel from "./update.user.model";
@@ -23,13 +23,20 @@ const UserTable = () => {
 
     const access_token = localStorage.getItem("access_token") as string;
 
+    const [meta, setMeta] = useState({
+        current: 1,
+        pageSize: 3,
+        pages: 0,
+        total: 0
+    })
+
     useEffect(() => {
         getData();
     }, [])
 
     const getData = async () => {
 
-        const res = await fetch("http://localhost:8000/api/v1/users/all", {
+        const res = await fetch(`http://localhost:8000/api/v1/users?current=${meta.current}&pageSize=${meta.pageSize}`, {
             headers: {
                 'Authorization': `Bearer ${access_token}`,
                 "Content-Type": "application/json",
@@ -42,6 +49,12 @@ const UserTable = () => {
             })
         }
         setListUsers(d.data.result);
+        setMeta({
+            current: d.data.meta.current,
+            pageSize: d.data.meta.pageSize,
+            pages: d.data.meta.pages,
+            total: d.data.meta.total,
+        })
 
     }
     const columns: TableProps<IUsers>['columns'] = [
@@ -121,6 +134,10 @@ const UserTable = () => {
             })
         }
     };
+
+    const handleOnChange = (page: number, pageSize: number) => {
+        console.log(page, pageSize);
+    }
     return (
         <>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -136,6 +153,13 @@ const UserTable = () => {
                 columns={columns}
                 dataSource={listUsers}
                 rowKey={"_id"}
+                pagination={{
+                    current: meta.current,
+                    pageSize: meta.pageSize,
+                    total: meta.total,
+                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                    onChange: (page, pageSize) => handleOnChange(page, pageSize)
+                }}
             />
             <CreateUserModel
                 access_token={access_token}
