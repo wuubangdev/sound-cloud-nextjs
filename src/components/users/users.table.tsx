@@ -135,8 +135,26 @@ const UserTable = () => {
         }
     };
 
-    const handleOnChange = (page: number, pageSize: number) => {
-        console.log(page, pageSize);
+    const handleOnChange = async (page: number, pageSize: number) => {
+        const res = await fetch(`http://localhost:8000/api/v1/users?current=${page}&pageSize=${pageSize}`, {
+            headers: {
+                'Authorization': `Bearer ${access_token}`,
+                "Content-Type": "application/json",
+            }
+        })
+        const d = await res.json();
+        if (!d.data) {
+            notification.error({
+                message: JSON.stringify(d.message),
+            })
+        }
+        setListUsers(d.data.result);
+        setMeta({
+            current: d.data.meta.current,
+            pageSize: d.data.meta.pageSize,
+            pages: d.data.meta.pages,
+            total: d.data.meta.total,
+        })
     }
     return (
         <>
@@ -158,7 +176,8 @@ const UserTable = () => {
                     pageSize: meta.pageSize,
                     total: meta.total,
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                    onChange: (page, pageSize) => handleOnChange(page, pageSize)
+                    onChange: (page, pageSize) => handleOnChange(page, pageSize),
+                    showSizeChanger: true
                 }}
             />
             <CreateUserModel
